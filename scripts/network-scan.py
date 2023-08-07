@@ -1,33 +1,46 @@
 import requests
-
-# Local network to scan
-
-
-class network:
-    def __init__(self, net_adress, cidr):
-        self.net_adress = net_adress
-        self.cidr = cidr
-        # self.hosts
-        # self.first_usable
-        # self.last_usable
-
-    # Calculates number of hosts on network
-    def calculate_hosts():
-        pass
-
-    def get_first_usable():
-        pass
-
-    def get_last_usable():
-        pass
-
-    # Scans network
-    def scan_network():
-        pass
-
-# Found host that responds to http-request
+import ipaddress
+import json
+from bs4 import BeautifulSoup
 
 
-class host:
-    def __init__(self, ip_adress, name):
-        self.ip_adress = ip_adress
+class site_host:
+    def __init__(self, url, title):
+        self.url = url
+        self.title = title
+
+
+def main():
+
+    network = ipaddress.IPv4Network(u'192.168.50.51/24', strict=False)
+    hosts = network.hosts()
+    found_hosts = list()
+    for ip in hosts:
+        # try:
+        # A GET request to the API
+        try:
+            url = f"http://{ip}"
+            response = requests.get(url, timeout=0.1)
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+            host_title = ""
+            for title in soup.find_all("title"):
+                host_title += title.get_text()
+
+        # Print the response
+            print(f"{ip}: {response.status_code} {host_title}")
+            found_hosts.append(site_host(url, host_title))
+        except:
+            print(f"{ip}: No response on port 80")
+    print(f"{len(found_hosts)} hosts responded on network")
+    host_properties = list()
+
+    for host in found_hosts:
+        host_properties.append({"url": host.url, "title": host.title})
+
+    host_json = json.dumps(host_properties)
+    with open('sites.json', 'w') as outfile:
+        json.dump(host_json, outfile)
+
+
+main()
