@@ -1,5 +1,7 @@
 import requests
 
+# Local network to scan
+
 
 class network:
     def __init__(self, net_adress, cidr):
@@ -9,11 +11,21 @@ class network:
         # self.first_usable
         # self.last_usable
 
+    # Calculates number of hosts on network
     def calculate_hosts():
         pass
 
+    def get_first_usable():
+        pass
+
+    def get_last_usable():
+        pass
+
+    # Scans network
     def scan_network():
         pass
+
+# Found host that responds to http-request
 
 
 class host:
