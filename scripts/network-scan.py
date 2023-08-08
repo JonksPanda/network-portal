@@ -16,7 +16,6 @@ def main():
     hosts = network.hosts()
     found_hosts = list()
     for ip in hosts:
-        # try:
         # A GET request to the API
         try:
             url = f"http://{ip}"
