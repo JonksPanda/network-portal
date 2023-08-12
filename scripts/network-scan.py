@@ -26,7 +26,6 @@ def main():
             url = f'http://{str(dns.resolver.resolve(dnsName, "PTR")[0])}'[:-1]
             print(url)
         except:
-            pass
             url = f'http://{ip}'
 
         # A GET request to the API
