@@ -1,7 +1,9 @@
-var http = require('http');
-var fs = require('fs');
+const http = require('http');
+const fs = require('fs');
+//var links = fs.readFileSync("./data/sites.json");
 
 const PORT = 80;
+
 
 fs.readFile('./html/index.html', function (err, html) {
 
