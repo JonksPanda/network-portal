@@ -1,7 +1,10 @@
 import requests
 import ipaddress
+from ipaddress import ip_address
 import json
 from bs4 import BeautifulSoup
+import dns.resolver
+import dns.reversename
 
 
 class site_host:
@@ -16,10 +19,20 @@ def main():
     hosts = network.hosts()
     found_hosts = list()
     for ip in hosts:
-        # A GET request to the API
+        dnsName = ''
+        dnsName = dns.reversename.from_address(str(ip))
         try:
-            url = f"http://{ip}"
-            response = requests.get(url, timeout=0.1)
+            print(str(dns.resolver.resolve(dnsName, "PTR")[0]))
+            url = f'http://{str(dns.resolver.resolve(dnsName, "PTR")[0])}'[:-1]
+            print(url)
+        except:
+            pass
+            url = f'http://{ip}'
+
+        # A GET request to the API
+
+        try:
+            response = requests.get(url, timeout=0.5)
 
             soup = BeautifulSoup(response.text, 'html.parser')
             host_title = ""
@@ -31,15 +44,15 @@ def main():
             found_hosts.append(site_host(url, host_title))
         except:
             print(f"{ip}: No response on port 80")
-    print(f"{len(found_hosts)} hosts responded on network")
+    print(f"response from {len(found_hosts)} hosts")
     host_properties = list()
 
     for host in found_hosts:
         host_properties.append({"url": host.url, "title": host.title})
 
-    host_json = json.dumps(host_properties)
-    with open('sites.json', 'w') as outfile:
-        json.dump(host_json, outfile)
+    #host_json = json.dumps(host_properties)
+    with open('data/sites.json', 'w') as outfile:
+        json.dump(host_properties, outfile)
 
 
 main()
